@@ -12,10 +12,15 @@ for Linux, FreeBSD, OpenBSD, Android, macOS, Windows, Nintendo Switch and potent
 
 ![Screenshot](assets/screenshot.png)
 
+> **Note:** This fork of Chiaki has been completely **vibecoded** (written entirely by AI using LLMs). It includes custom features such as dual-screen touchpad support for the AYN THOR device.
 ## Project Status
 
 As all relevant features are implemented, this project is considered to be finished and in maintenance mode only.
 No major updates are planned and contributions are only accepted in special cases.
+
+## Features Added in This Fork
+
+* **AYN THOR Dual-Screen Touchpad**: The bottom screen of the AYN THOR handheld can now be used as a full PS5 DualSense touchpad, complete with multi-touch, haptic feedback, and gestures. You can enable this feature in the app settings.
 
 ## Installing
 

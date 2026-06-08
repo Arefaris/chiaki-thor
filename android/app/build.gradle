@@ -20,6 +20,7 @@ println("Determined Chiaki Version: $chiakiVersion")
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
+    ndkVersion "21.4.7075529"
     defaultConfig {
         applicationId "com.metallic.chiaki"
         minSdkVersion 21
@@ -36,7 +37,11 @@ android {
                         "-DCHIAKI_ENABLE_FFMPEG_DECODER=OFF",
                         "-DCHIAKI_ENABLE_PI_DECODER=OFF",
                         "-DCHIAKI_LIB_ENABLE_OPUS=OFF",
-                        "-DCHIAKI_LIB_OPENSSL_EXTERNAL_PROJECT=ON"
+                        "-DCHIAKI_LIB_OPENSSL_EXTERNAL_PROJECT=ON",
+                        "-Dnanopb_PROTOC_PATH=protoc",
+                        "-DPROTOC=protoc",
+                        "-DPERL_EXE=perl",
+                        "-DPYTHON_EXECUTABLE=python"
             }
         }
     }
@@ -52,7 +57,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            version "3.10.2+"
+            version "3.10.2.4988404"
             path rootCMakeLists
         }
     }

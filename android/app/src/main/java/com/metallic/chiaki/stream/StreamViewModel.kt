@@ -8,6 +8,7 @@ import androidx.lifecycle.*
 import com.metallic.chiaki.common.LogManager
 import com.metallic.chiaki.session.StreamSession
 import com.metallic.chiaki.common.Preferences
+import com.metallic.chiaki.dualscreen.DualScreenManager
 import com.metallic.chiaki.lib.*
 import com.metallic.chiaki.session.StreamInput
 
@@ -20,6 +21,11 @@ class StreamViewModel(val application: Application, val connectInfo: ConnectInfo
 	val input = StreamInput(application, preferences)
 	val session = StreamSession(connectInfo, logManager, preferences.logVerbose, input)
 
+	val dualScreenManager = DualScreenManager(application)
+
+	private var _dualScreenEnabled = MutableLiveData<Boolean>(preferences.dualScreenTouchpadEnabled)
+	val dualScreenEnabled: LiveData<Boolean> get() = _dualScreenEnabled
+
 	private var _onScreenControlsEnabled = MutableLiveData<Boolean>(preferences.onScreenControlsEnabled)
 	val onScreenControlsEnabled: LiveData<Boolean> get() = _onScreenControlsEnabled
 
@@ -30,6 +36,7 @@ class StreamViewModel(val application: Application, val connectInfo: ConnectInfo
 	{
 		super.onCleared()
 		_session?.shutdown()
+		dualScreenManager.unregister()
 	}
 
 	fun setOnScreenControlsEnabled(enabled: Boolean)
@@ -42,5 +49,11 @@ class StreamViewModel(val application: Application, val connectInfo: ConnectInfo
 	{
 		preferences.touchpadOnlyEnabled = enabled
 		_touchpadOnlyEnabled.value = enabled
+	}
+
+	fun setDualScreenEnabled(enabled: Boolean)
+	{
+		preferences.dualScreenTouchpadEnabled = enabled
+		_dualScreenEnabled.value = enabled
 	}
 }

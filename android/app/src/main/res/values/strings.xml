@@ -94,6 +94,8 @@
     <string name="preferences_motion_enabled_summary">Use device\'s motion sensors for controller motion</string>
     <string name="preferences_button_haptic_enabled_title">Touch Haptics</string>
     <string name="preferences_button_haptic_enabled_summary">Use phone vibration motor for short haptic feedback on button touches</string>
+    <string name="preferences_dual_screen_touchpad_enabled_title">Dual-Screen Touchpad</string>
+    <string name="preferences_dual_screen_touchpad_enabled_summary">Use the secondary display on devices like AYN THOR as a full-screen touchpad</string>
     <string name="alert_message_delete_registered_host">Are you sure you want to delete the registered console %s with ID %s?</string>
     <string name="alert_message_delete_manual_host">Are you sure you want to delete the console entry for %s?</string>
     <string name="action_keep">Keep</string>
@@ -119,4 +121,5 @@
     <string name="preferences_fps_key">stream_fps</string>
     <string name="preferences_bitrate_key">stream_bitrate</string>
     <string name="preferences_codec_key">stream_codec</string>
+    <string name="preferences_dual_screen_touchpad_enabled_key">dual_screen_touchpad_enabled</string>
 </resources>
