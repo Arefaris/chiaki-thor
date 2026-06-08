@@ -6,6 +6,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
 import android.graphics.Matrix
+import android.hardware.display.DisplayManager
 import android.os.*
 import android.view.*
 import android.widget.EditText
@@ -21,6 +22,8 @@ import com.metallic.chiaki.common.ext.viewModelFactory
 import com.metallic.chiaki.databinding.ActivityStreamBinding
 import com.metallic.chiaki.lib.ConnectInfo
 import com.metallic.chiaki.lib.ConnectVideoProfile
+import com.metallic.chiaki.dualscreen.DualScreenManager
+import com.metallic.chiaki.dualscreen.TouchpadPresentation
 import com.metallic.chiaki.session.*
 import com.metallic.chiaki.touchcontrols.DefaultTouchControlsFragment
 import com.metallic.chiaki.touchcontrols.TouchControlsFragment
@@ -90,6 +93,30 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 			showOverlay()
 		}
 
+		// Dual-screen touchpad (AYN THOR)
+		viewModel.dualScreenManager.secondaryDisplay.observe(this, Observer { display ->
+			if(display != null && viewModel.dualScreenEnabled.value == true)
+			{
+				showSecondScreenTouchpad(display)
+			}
+			else
+			{
+				dismissSecondScreenTouchpad()
+			}
+		})
+
+		viewModel.dualScreenEnabled.observe(this, Observer { enabled ->
+			val display = viewModel.dualScreenManager.secondaryDisplay.value
+			if(display != null && enabled)
+			{
+				showSecondScreenTouchpad(display)
+			}
+			else
+			{
+				dismissSecondScreenTouchpad()
+			}
+		})
+
 		binding.displayModeToggle.addOnButtonCheckedListener { _, _, _ ->
 			adjustStreamViewAspect()
 			showOverlay()
@@ -116,6 +143,28 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 		}
 	}
 
+	private var touchpadPresentation: TouchpadPresentation? = null
+	private val secondScreenDisposable = CompositeDisposable()
+
+	private fun showSecondScreenTouchpad(display: android.view.Display)
+	{
+		dismissSecondScreenTouchpad()
+		val presentation = TouchpadPresentation(this, display)
+		presentation.show()
+		presentation.controllerState
+			.subscribe { viewModel.input.secondScreenControllerState = it }
+			.addTo(secondScreenDisposable)
+		touchpadPresentation = presentation
+	}
+
+	private fun dismissSecondScreenTouchpad()
+	{
+		secondScreenDisposable.clear()
+		touchpadPresentation?.dismiss()
+		touchpadPresentation = null
+		viewModel.input.secondScreenControllerState = com.metallic.chiaki.lib.ControllerState()
+	}
+
 	private val controlsDisposable = CompositeDisposable()
 
 	override fun onAttachFragment(fragment: Fragment)
@@ -137,17 +186,21 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 		super.onResume()
 		hideSystemUI()
 		viewModel.session.resume()
+		viewModel.dualScreenManager.register()
 	}
 
 	override fun onPause()
 	{
 		super.onPause()
 		viewModel.session.pause()
+		viewModel.dualScreenManager.unregister()
 	}
 
 	override fun onDestroy()
 	{
 		super.onDestroy()
+		dismissSecondScreenTouchpad()
+		secondScreenDisposable.dispose()
 		controlsDisposable.dispose()
 	}
 

@@ -40,13 +40,19 @@ class StreamInput(val context: Context, val preferences: Preferences)
 		if(motionControllerState.r2State > 0U)
 			controllerState.r2State = motionControllerState.r2State
 
-		return controllerState or touchControllerState
+		return controllerState or touchControllerState or secondScreenControllerState
 	}
 
 	private val sensorControllerState = ControllerState() // from Motion Sensors
 	private val keyControllerState = ControllerState() // from KeyEvents
 	private val motionControllerState = ControllerState() // from MotionEvents
 	var touchControllerState = ControllerState()
+		set(value)
+		{
+			field = value
+			controllerStateUpdated()
+		}
+	var secondScreenControllerState = ControllerState()
 		set(value)
 		{
 			field = value
