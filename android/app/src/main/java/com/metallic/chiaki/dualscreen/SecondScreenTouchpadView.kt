@@ -26,17 +26,13 @@ class SecondScreenTouchpadView(context: Context) : View(context)
 		private const val SHORT_BUTTON_PRESS_DURATION_MS = 200L
 		private const val BUTTON_HOLD_DELAY_MS = 500L
 
-		private const val BACKGROUND_COLOR = 0xFF1A1A2E.toInt()
-		private const val BORDER_COLOR = 0x1AFFFFFF
+		private const val BACKGROUND_COLOR = 0xFF000000.toInt()
 		private const val DIVIDER_COLOR = 0x1AFFFFFF
-		private const val LABEL_COLOR = 0x26FFFFFF
 		private const val TOUCH_INDICATOR_COLOR = 0x664FC3F7.toInt()
 		private const val TOUCH_GLOW_COLOR = 0x334FC3F7
 		private const val TOUCH_INDICATOR_RADIUS_DP = 24.0f
 		private const val TOUCH_GLOW_RADIUS_DP = 48.0f
-		private const val BORDER_WIDTH_DP = 1.0f
-		private const val BORDER_INSET_DP = 16.0f
-		private const val LABEL_TEXT_SIZE_SP = 18.0f
+		private const val DIVIDER_WIDTH_DP = 1.0f
 	}
 
 	private val haptics = ButtonHaptics(context)
@@ -49,23 +45,17 @@ class SecondScreenTouchpadView(context: Context) : View(context)
 		style = Paint.Style.FILL
 	}
 
-	private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-		color = BORDER_COLOR
-		style = Paint.Style.STROKE
-		strokeWidth = BORDER_WIDTH_DP * density
-	}
-
 	private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
 		color = DIVIDER_COLOR
 		style = Paint.Style.STROKE
-		strokeWidth = BORDER_WIDTH_DP * density
+		strokeWidth = DIVIDER_WIDTH_DP * density
 	}
 
-	private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-		color = LABEL_COLOR
-		textSize = LABEL_TEXT_SIZE_SP * resources.displayMetrics.scaledDensity
-		textAlign = Paint.Align.CENTER
-		letterSpacing = 0.3f
+	private var uiAlpha = 1f
+	fun setUiAlpha(alpha: Float) {
+		uiAlpha = alpha
+		dividerPaint.alpha = (0x1A * alpha).toInt()
+		invalidate()
 	}
 
 	private val touchIndicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -135,18 +125,11 @@ class SecondScreenTouchpadView(context: Context) : View(context)
 		// Background
 		canvas.drawColor(BACKGROUND_COLOR)
 
-		val inset = BORDER_INSET_DP * density
-
-		// Border rectangle
-		canvas.drawRect(inset, inset, width - inset, height - inset, borderPaint)
-
-		// Center vertical dividing line
-		val centerX = width / 2.0f
-		canvas.drawLine(centerX, inset, centerX, height - inset, dividerPaint)
-
-		// "TOUCHPAD" label
-		val labelY = height / 2.0f + labelPaint.textSize / 3.0f
-		canvas.drawText("TOUCHPAD", centerX, labelY, labelPaint)
+		if (uiAlpha > 0f) {
+			// Center vertical dividing line
+			val centerX = width / 2.0f
+			canvas.drawLine(centerX, 0f, centerX, height.toFloat(), dividerPaint)
+		}
 
 		// Touch indicators
 		val indicatorRadius = TOUCH_INDICATOR_RADIUS_DP * density

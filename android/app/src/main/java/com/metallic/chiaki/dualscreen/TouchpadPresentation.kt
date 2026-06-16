@@ -34,8 +34,8 @@ class TouchpadPresentation(outerContext: Context, display: Display)
 {
 	companion object
 	{
-		private const val BACKGROUND_COLOR = 0xFF0D0D1A.toInt()
-		private const val BUTTON_BAR_COLOR = 0xFF1A1A2E.toInt()
+		private const val BACKGROUND_COLOR = 0xFF000000.toInt()
+		private const val BUTTON_BAR_COLOR = 0xFF000000.toInt()
 		private const val BUTTON_BAR_CORNER_RADIUS_DP = 16.0f
 		private const val BUTTON_SIZE_DP = 56
 		private const val BUTTON_PADDING_DP = 16
@@ -43,6 +43,23 @@ class TouchpadPresentation(outerContext: Context, display: Display)
 	}
 
 	private lateinit var touchpadView: SecondScreenTouchpadView
+	private lateinit var buttonBar: LinearLayout
+
+	private val hideUIRunnable = Runnable {
+		if(!this::touchpadView.isInitialized || !this::buttonBar.isInitialized) return@Runnable
+		touchpadView.setUiAlpha(0f)
+		buttonBar.animate().alpha(0f).setDuration(500).start()
+	}
+
+	override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+		if (this::touchpadView.isInitialized && this::buttonBar.isInitialized) {
+			touchpadView.setUiAlpha(1f)
+			buttonBar.animate().alpha(1f).setDuration(200).start()
+			buttonBar.removeCallbacks(hideUIRunnable)
+			buttonBar.postDelayed(hideUIRunnable, 10000L)
+		}
+		return super.dispatchTouchEvent(ev)
+	}
 	private val haptics by lazy { ButtonHaptics(context) }
 
 	private var buttonState = ControllerState()
@@ -99,7 +116,7 @@ class TouchpadPresentation(outerContext: Context, display: Display)
 		val buttonBarHeight = (BUTTON_BAR_HEIGHT_DP * density).toInt()
 		val cornerRadius = BUTTON_BAR_CORNER_RADIUS_DP * density
 
-		val buttonBar = LinearLayout(context).apply {
+		buttonBar = LinearLayout(context).apply {
 			orientation = LinearLayout.HORIZONTAL
 			gravity = Gravity.CENTER
 			setBackgroundColor(BUTTON_BAR_COLOR)
@@ -167,6 +184,9 @@ class TouchpadPresentation(outerContext: Context, display: Display)
 		))
 
 		setContentView(rootLayout)
+
+		// Start the auto-hide timer initially
+		buttonBar.postDelayed(hideUIRunnable, 10000L)
 	}
 
 	private fun createButtonView(
