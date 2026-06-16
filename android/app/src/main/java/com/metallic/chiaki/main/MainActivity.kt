@@ -4,13 +4,16 @@ package com.metallic.chiaki.main
 
 import android.app.ActivityOptions
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Display
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.metallic.chiaki.R
@@ -18,6 +21,8 @@ import com.metallic.chiaki.common.*
 import com.metallic.chiaki.common.ext.putRevealExtra
 import com.metallic.chiaki.common.ext.viewModelFactory
 import com.metallic.chiaki.databinding.ActivityMainBinding
+import com.metallic.chiaki.dualscreen.DualScreenManager
+import com.metallic.chiaki.dualscreen.TouchpadPresentation
 import com.metallic.chiaki.lib.ConnectInfo
 import com.metallic.chiaki.lib.DiscoveryHost
 import com.metallic.chiaki.manualconsole.EditManualConsoleActivity
@@ -31,6 +36,18 @@ class MainActivity : AppCompatActivity()
 
 	private lateinit var binding: ActivityMainBinding
 	private var discoveryMenuItem: MenuItem? = null
+
+	// Dual-screen touchpad (AYN THOR)
+	private lateinit var dualScreenManager: DualScreenManager
+	private var touchpadPresentation: TouchpadPresentation? = null
+	private lateinit var preferences: Preferences
+
+	private val prefChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+		if(key == preferences.dualScreenTouchpadEnabledKey)
+		{
+			updateDualScreenTouchpad()
+		}
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -72,6 +89,16 @@ class MainActivity : AppCompatActivity()
 			discoveryMenuItem?.let { updateDiscoveryMenuItem(it, active) }
 			updateEmptyInfo()
 		})
+
+		// Dual-screen touchpad (AYN THOR) - show immediately on app launch
+		preferences = Preferences(this)
+		dualScreenManager = DualScreenManager(this)
+		PreferenceManager.getDefaultSharedPreferences(this)
+			.registerOnSharedPreferenceChangeListener(prefChangeListener)
+
+		dualScreenManager.secondaryDisplay.observe(this, Observer {
+			updateDualScreenTouchpad()
+		})
 	}
 
 	private fun updateEmptyInfo()
@@ -99,10 +126,54 @@ class MainActivity : AppCompatActivity()
 		viewModel.discoveryManager.resume()
 	}
 
+	override fun onResume()
+	{
+		super.onResume()
+		dualScreenManager.register()
+		updateDualScreenTouchpad()
+	}
+
+	override fun onPause()
+	{
+		super.onPause()
+		dualScreenManager.unregister()
+	}
+
 	override fun onStop()
 	{
 		super.onStop()
 		viewModel.discoveryManager.pause()
+	}
+
+	override fun onDestroy()
+	{
+		super.onDestroy()
+		dismissTouchpad()
+		PreferenceManager.getDefaultSharedPreferences(this)
+			.unregisterOnSharedPreferenceChangeListener(prefChangeListener)
+	}
+
+	private fun updateDualScreenTouchpad()
+	{
+		val display = dualScreenManager.secondaryDisplay.value
+		if(display != null && preferences.dualScreenTouchpadEnabled)
+			showTouchpad(display)
+		else
+			dismissTouchpad()
+	}
+
+	private fun showTouchpad(display: Display)
+	{
+		dismissTouchpad()
+		val presentation = TouchpadPresentation(this, display)
+		presentation.show()
+		touchpadPresentation = presentation
+	}
+
+	private fun dismissTouchpad()
+	{
+		touchpadPresentation?.dismiss()
+		touchpadPresentation = null
 	}
 
 	override fun onBackPressed()

@@ -28,6 +28,7 @@ class DataStore(val preferences: Preferences): PreferenceDataStore()
 		preferences.rumbleEnabledKey -> preferences.rumbleEnabled
 		preferences.motionEnabledKey -> preferences.motionEnabled
 		preferences.buttonHapticEnabledKey -> preferences.buttonHapticEnabled
+		preferences.dualScreenTouchpadEnabledKey -> preferences.dualScreenTouchpadEnabled
 		else -> defValue
 	}
 
@@ -40,6 +41,7 @@ class DataStore(val preferences: Preferences): PreferenceDataStore()
 			preferences.rumbleEnabledKey -> preferences.rumbleEnabled = value
 			preferences.motionEnabledKey -> preferences.motionEnabled = value
 			preferences.buttonHapticEnabledKey -> preferences.buttonHapticEnabled = value
+			preferences.dualScreenTouchpadEnabledKey -> preferences.dualScreenTouchpadEnabled = value
 		}
 	}
 
