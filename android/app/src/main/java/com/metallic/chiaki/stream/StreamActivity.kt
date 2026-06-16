@@ -194,6 +194,7 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 		super.onPause()
 		viewModel.session.pause()
 		viewModel.dualScreenManager.unregister()
+		dismissSecondScreenTouchpad()
 	}
 
 	override fun onDestroy()

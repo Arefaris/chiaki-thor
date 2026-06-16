@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity()
 	{
 		super.onPause()
 		dualScreenManager.unregister()
+		dismissTouchpad()
 	}
 
 	override fun onStop()
