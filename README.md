@@ -1,19 +1,21 @@
 
 ![Chiaki Logo](assets/chiaki_wide.png)
 
-# Chiaki
+# Chiaki AYN THOR Edition
+
+> ⚠️ **IMPORTANT: THIS IS A FORK** ⚠️  
+> This repository is a **modified fork** of the original [Chiaki](https://github.com/thestr4ng3r/chiaki) project (and its active Android forks).  
+> **I am not the original author of Chiaki.** All credit for the core remote play technology goes to [thestr4ng3r](https://github.com/thestr4ng3r), [flaki](https://github.com/flaki/chiaki), and all the amazing original contributors.  
+> 
+> This specific fork exists **solely to add custom Dual-Screen Touchpad support for the AYN THOR** Android console. All modifications in this fork were completely **vibecoded** (written entirely by AI using LLMs).
 
 **Disclaimer:** This project is not endorsed or certified by Sony Interactive Entertainment LLC.
 
 [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/c81ogebvsmo43dd3?svg=true)](https://ci.appveyor.com/project/thestr4ng3r/chiaki) [![builds.sr.ht Status](https://builds.sr.ht/~thestr4ng3r/chiaki.svg)](https://builds.sr.ht/~thestr4ng3r/chiaki?)
 
-Chiaki is a Free and Open Source Software Client for PlayStation 4 and PlayStation 5 Remote Play
-for Linux, FreeBSD, OpenBSD, Android, macOS, Windows, Nintendo Switch and potentially even more platforms.
+Chiaki is a Free and Open Source Software Client for PlayStation 4 and PlayStation 5 Remote Play.
 
 ![Screenshot](assets/screenshot.png)
-
-> **Note:** This fork of Chiaki has been completely **vibecoded** (written entirely by AI using LLMs). It includes custom features such as dual-screen touchpad support for the AYN THOR device.
-## Project Status
 
 As all relevant features are implemented, this project is considered to be finished and in maintenance mode only.
 No major updates are planned and contributions are only accepted in special cases.
